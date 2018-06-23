@@ -8,24 +8,36 @@ defmodule Blinker do
   end
 
   def init(_opts) do
-    {:ok, led} = GPIO.start_link(17, :output)
-    schedule_cast()
-    {:ok, %{led: led, state: true}}
+    {:ok, red} = GPIO.start_link(17, :output)
+    {:ok, yellow} = GPIO.start_link(27, :output)
+    {:ok, green} = GPIO.start_link(22, :output)
+
+    lights = :queue.new()
+    lights = :queue.in(%{pid: green,  key: :green,  interval: 3_000}, lights)
+    lights = :queue.in(%{pid: yellow, key: :yellow, interval: 1_000}, lights)
+    lights = :queue.in(%{pid: red,    key: :red,    interval: 3_000}, lights)
+
+    schedule_cast(1)
+    {:ok, %{red: red, yellow: yellow, green: green, lights: lights}}
   end
 
-  def schedule_cast() do
-    Process.send_after(self(), :time_elapsed, 1_000)
+  def schedule_cast(time) do
+    Process.send_after(self(), :cycle_lights, time)
   end
 
-  def handle_info(:time_elapsed, %{led: led, state: true}) do
-    schedule_cast()
-    GPIO.write(led, 1)
-    {:noreply, %{led: led, state: false}}
+  def handle_info(:cycle_lights, state) do
+    {{:value, light}, other_lights} = :queue.out(state.lights)
+
+    color_me(light.key, state)
+    schedule_cast(light.interval)
+
+    {:noreply, %{state | lights: :queue.in(light, other_lights)}}
   end
 
-  def handle_info(:time_elapsed, %{led: led, state: false}) do
-    schedule_cast()
-    GPIO.write(led, 0)
-    {:noreply, %{led: led, state: true}}
+  def color_me(color, state) do
+    GPIO.write(state.red, color == :red)
+    GPIO.write(state.yellow, color == :yellow)
+    GPIO.write(state.green, color == :green)
   end
+
 end
