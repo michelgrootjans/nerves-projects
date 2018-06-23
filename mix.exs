@@ -38,7 +38,8 @@ defmodule TrafficLight.MixProject do
   defp deps do
     [
       {:nerves, "~> 1.0", runtime: false},
-      {:shoehorn, "~> 0.2"}
+      {:shoehorn, "~> 0.2"},
+      {:elixir_ale, "~> 1.0"}
     ] ++ deps(@target)
   end
 

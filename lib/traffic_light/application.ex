@@ -26,6 +26,7 @@ defmodule TrafficLight.Application do
     [
       # Starts a worker by calling: TrafficLight.Worker.start_link(arg)
       # {TrafficLight.Worker, arg},
+      {Blinker,[]}
     ]
   end
 end

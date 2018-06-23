@@ -33,11 +33,12 @@ config :nerves_network, :default,
 config :nerves_init_gadget,
   ifname: "wlan0",
   address_method: :dhcp,
-  mdns_domain: "nerves-michel.local",
+  mdns_domain: "nerves.local",
   node_name: nil,
   node_host: :mdns_domain
 
 config :logger, backends: [RingLogger]
+
 # Import target specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 # Uncomment to use target specific configurations
