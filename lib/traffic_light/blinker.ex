@@ -3,12 +3,13 @@ defmodule Blinker do
   alias ElixirALE.GPIO
   require Logger
 
-  def start_link(_) do
-    GenServer.start_link(__MODULE__, nil)
+  def start_link(opts) do
+    GenServer.start_link(__MODULE__, opts)
   end
 
-  def init(_args) do
+  def init(_opts) do
     {:ok, led} = GPIO.start_link(17, :output)
+    schedule_cast()
     {:ok, %{led: led, state: true}}
   end
 
@@ -27,5 +28,4 @@ defmodule Blinker do
     GPIO.write(led, 0)
     {:noreply, %{led: led, state: true}}
   end
-
 end
