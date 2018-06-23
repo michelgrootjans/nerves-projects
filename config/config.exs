@@ -37,7 +37,7 @@ config :nerves_init_gadget,
   node_name: nil,
   node_host: :mdns_domain
 
-  config :logger, backens: [RingLogger]
+config :logger, backends: [RingLogger]
 # Import target specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 # Uncomment to use target specific configurations
