@@ -3,13 +3,15 @@ defmodule Blinker do
   alias ElixirALE.GPIO
   require Logger
 
+  @blink_speed 100
+
   def start_link(opts) do
     GenServer.start_link(__MODULE__, opts)
   end
 
   def init(_opts) do
     {:ok, led} = GPIO.start_link(27, :output)
-    Process.send_after(self(), :switch_on, 200)
+    Process.send_after(self(), :switch_on, @blink_speed)
     {:ok, %{led: led, blinking: false}}
   end
 
@@ -21,19 +23,19 @@ defmodule Blinker do
 
   def handle_info(:switch_on, %{blinking: true} = state) do
     GPIO.write(state.led, 1)
-    Process.send_after(self(), :switch_off, 200)
+    Process.send_after(self(), :switch_off, @blink_speed)
     {:noreply, state}
   end
 
   def handle_info(:switch_off, %{blinking: true} = state) do
     GPIO.write(state.led, 0)
-    Process.send_after(self(), :switch_on, 200)
+    Process.send_after(self(), :switch_on, @blink_speed)
     {:noreply, state}
   end
 
   def handle_info(_, state) do
     GPIO.write(state.led, 0)
-    Process.send_after(self(), :switch_on, 200)
+    Process.send_after(self(), :switch_on, @blink_speed)
     {:noreply, state}
   end
 end
