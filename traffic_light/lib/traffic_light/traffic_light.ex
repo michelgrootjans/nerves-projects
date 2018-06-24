@@ -9,15 +9,23 @@ defmodule TrafficLight do
 
   def init(_opts) do
     {:ok, red} = GPIO.start_link(17, :output)
-    {:ok, yellow} = GPIO.start_link(27, :output)
+#    {:ok, yellow} = GPIO.start_link(27, :output)
+    {:ok, yellow} = Blinker.start_link([])
     {:ok, green} = GPIO.start_link(22, :output)
 
-    cycle = :queue.new()
-    cycle = :queue.in(%{color: :green,  interval: 2_000}, cycle)
-    cycle = :queue.in(%{color: :yellow, interval: 1_000}, cycle)
-    cycle = :queue.in(%{color: :red,    interval: 2_000}, cycle)
+    # starting ...
+    GPIO.write(red, 1)
+    GPIO.write(yellow, 1)
+    GPIO.write(green, 1)
 
-    schedule_cycle(1)
+
+    cycle = :queue.new()
+    cycle = :queue.in(%{color: :green,  interval: 500}, cycle)
+    cycle = :queue.in(%{color: :yellow, interval: 500}, cycle)
+    cycle = :queue.in(%{color: :red,    interval: 500}, cycle)
+    cycle = :queue.in(%{color: :yellow, interval: 500}, cycle)
+
+    schedule_cycle(1_000)
     {:ok, %{red: red, yellow: yellow, green: green, cycle: cycle}}
   end
 
@@ -36,7 +44,8 @@ defmodule TrafficLight do
 
   def color_me(color, state) do
     GPIO.write(state.red, color == :red)
-    GPIO.write(state.yellow, color == :yellow)
+#    GPIO.write(state.yellow, color == :yellow)
+    Blinker.write(state.yellow, color == :yellow)
     GPIO.write(state.green, color == :green)
   end
 
