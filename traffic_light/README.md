@@ -1,6 +1,20 @@
 # TrafficLight
 
-**TODO: Add description**
+This is a traffic light simulation with a Raspberry Pi 3. To make it work, do the following:
+
+- insert a memory card in your computer
+- execute the following
+> export MIX_TARGET=rpi3
+> export NERVES_NETWORK_SSID=[YOUR NETWORK NAME]
+> export NERVES_NETWORK_PSK=[YOUR NETWORK PASSWORD]
+> mix do deps.get, firmware, firmware.burn
+
+On the Raspberry Pi, create the following connections:
+GPIO 17 > red    LED > 330 Ohm > GND
+GPIO 27 > yellow LED > 330 Ohm > GND
+GPIO 22 > green  LED > 330 Ohm > GND
+
+Insert the memory card in the Raspberry PI, power it on, and watch the magic!
 
 ## Targets
 
