@@ -5,8 +5,11 @@ This is a traffic light simulation with a Raspberry Pi 3. To make it work, do th
 - insert a memory card in your computer
 - execute the following
 > export MIX_TARGET=rpi3
+
 > export NERVES_NETWORK_SSID=[YOUR NETWORK NAME]
+
 > export NERVES_NETWORK_PSK=[YOUR NETWORK PASSWORD]
+
 > mix do deps.get, firmware, firmware.burn
 
 On the Raspberry Pi, create the following connections:
