@@ -1,4 +1,4 @@
-defmodule Blinker do
+defmodule TrafficLight do
   use GenServer
   alias ElixirALE.GPIO
   require Logger
@@ -13,9 +13,9 @@ defmodule Blinker do
     {:ok, green} = GPIO.start_link(22, :output)
 
     cycle = :queue.new()
-    cycle = :queue.in(%{key: :green,  interval: 2_000}, cycle)
-    cycle = :queue.in(%{key: :yellow, interval: 1_000}, cycle)
-    cycle = :queue.in(%{key: :red,    interval: 2_000}, cycle)
+    cycle = :queue.in(%{color: :green,  interval: 2_000}, cycle)
+    cycle = :queue.in(%{color: :yellow, interval: 1_000}, cycle)
+    cycle = :queue.in(%{color: :red,    interval: 2_000}, cycle)
 
     schedule_cycle(1)
     {:ok, %{red: red, yellow: yellow, green: green, cycle: cycle}}
@@ -26,12 +26,12 @@ defmodule Blinker do
   end
 
   def handle_info(:apply_cycle, state) do
-    {{:value, light}, other_lights} = :queue.out(state.cycle)
+    {{:value, led}, other_leds} = :queue.out(state.cycle)
 
-    color_me(light.key, state)
-    schedule_cycle(light.interval)
+    color_me(led.color, state)
+    schedule_cycle(led.interval)
 
-    {:noreply, %{state | cycle: :queue.in(light, other_lights)}}
+    {:noreply, %{state | cycle: :queue.in(led, other_leds)}}
   end
 
   def color_me(color, state) do
